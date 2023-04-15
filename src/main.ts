@@ -51,6 +51,11 @@ const mainloop = async () => {
         break;
         }
     }
+
+    if (!isSupportedPage) {
+        nManager.addNotification('This page is not supported.', 'error', 5e3);
+        NotificationManager.cleanUp();
+    }
 };
 
 mainloop();

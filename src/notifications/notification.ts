@@ -5,6 +5,7 @@ class NotificationManager {
 
     private static notificationList: HTMLOListElement | undefined;
     private static instance: NotificationManager | undefined;
+    private static isCleaningUp = false;
 
     private constructor() {
         const notificationList = document.getElementById('notification-list');
@@ -24,6 +25,25 @@ class NotificationManager {
             NotificationManager.instance = new NotificationManager();
         }
         return NotificationManager.instance;
+    }
+
+    public static async cleanUp(): Promise<void> {
+        // check if the notification list exists
+        if (!NotificationManager.notificationList || !NotificationManager.instance || NotificationManager.isCleaningUp) {
+            return;
+        }
+        NotificationManager.isCleaningUp = true;
+        // check if the notification list is empty and keep waiting
+        while (NotificationManager.notificationList.childElementCount > 0) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        // remove the notification list from the DOM
+        NotificationManager.notificationList.remove();
+        NotificationManager.notificationList = undefined;
+        NotificationManager.instance = undefined;
+        NotificationManager.isCleaningUp = false;
+
+        console.debug('Notification list removed.');
     }
 
     private createNotification(message: string, type = 'info'): HTMLLIElement {
@@ -66,11 +86,11 @@ class NotificationManager {
     // add "addNotification" as a method of the class
     public addNotification(message: string, type = 'info', timeInMS: number = 3000): HTMLLIElement {
         type = type.toLowerCase();
-        if (NotificationManager.notificationList.childElementCount >= 5) {
-            this.closeNotification(NotificationManager.notificationList.firstElementChild as HTMLLIElement);
+        if (NotificationManager.notificationList!.childElementCount >= 5) {
+            this.closeNotification(NotificationManager.notificationList!.firstElementChild as HTMLLIElement);
         }
         const notification = this.createNotification(message, type);
-        NotificationManager.notificationList.appendChild(notification);
+        NotificationManager.notificationList!.appendChild(notification);
         this.showNotification(notification, timeInMS);
         return notification;
     }
@@ -91,7 +111,7 @@ class NotificationManager {
         
         // remove the notifications after 10 seconds
         setTimeout(() => {
-            const notifications = NotificationManager.notificationList.getElementsByClassName('notification');
+            const notifications = NotificationManager.notificationList!.getElementsByClassName('notification');
             for (let i = 0; i < notifications.length; i++) {
                 this.closeNotification(notifications[i] as HTMLLIElement);
             }

@@ -1,7 +1,7 @@
 import NotificationManager from './notifications/notification';
 import SkillCounter from './jobs/skill-counter';
 
-const mainloop = async () => {
+const countSkills = async () => {
     const nManager = NotificationManager.getInstance();
     const sCounter = new SkillCounter();
 
@@ -22,6 +22,34 @@ const mainloop = async () => {
         nManager.addNotification('Successfully recorded skills.', 'success');
     } else {
         nManager.addNotification('Skills have not changed.', 'info');
+    }
+};
+
+const urlFunctionMap = [
+        {
+            pattern: /^https:\/\/www\.linkedin\.com\/jobs\/collections\/(recommended|hiring-in-network|)(\/|\?.*)?$/i,
+            func: countSkills,
+        },
+        {
+            pattern: /^https:\/\/www\.linkedin\.com\/jobs\/view\/\d+(\/|\?.*)?$/i,
+            func: countSkills,
+        },
+    ];
+  
+  
+
+const mainloop = async () => {
+    const nManager = NotificationManager.getInstance();
+    const url = window.location.href.split('?')[0];
+
+    let isSupportedPage = false;
+
+    for (const urlConfig of urlFunctionMap) {
+        if (urlConfig.pattern.test(url)) {
+            isSupportedPage = true;
+            urlConfig.func();
+        break;
+        }
     }
 };
 

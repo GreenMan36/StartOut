@@ -3,9 +3,10 @@ import './notification.css';
 
 class NotificationManager {
 
-    private static notificationList: HTMLOListElement;
+    private static notificationList: HTMLOListElement | undefined;
+    private static instance: NotificationManager | undefined;
 
-    constructor() {
+    private constructor() {
         const notificationList = document.getElementById('notification-list');
         if (notificationList instanceof HTMLOListElement) {
             NotificationManager.notificationList = notificationList;
@@ -16,6 +17,13 @@ class NotificationManager {
             document.body.appendChild(NotificationManager.notificationList);
         }
         console.debug(`Notification list ${NotificationManager.notificationList === notificationList ? 'already exists' : 'created'}.`);
+    }
+
+    public static getInstance(): NotificationManager {
+        if (!NotificationManager.instance || !NotificationManager.notificationList) {
+            NotificationManager.instance = new NotificationManager();
+        }
+        return NotificationManager.instance;
     }
 
     private createNotification(message: string, type = 'info'): HTMLLIElement {

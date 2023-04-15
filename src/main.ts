@@ -2,7 +2,7 @@ import NotificationManager from './notifications/notification';
 import SkillCounter from './jobs/skill-counter';
 
 const mainloop = async () => {
-    const nManager = new NotificationManager();
+    const nManager = NotificationManager.getInstance();
     const sCounter = new SkillCounter();
 
     // open the skills window

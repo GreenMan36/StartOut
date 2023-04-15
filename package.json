@@ -7,7 +7,6 @@
   "devDependencies": {
     "autoprefixer": "^10.4.14",
     "rollup": "^2.79.1",
-    "rollup-plugin-bookmarklet": "^2.0.0",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-postcss": "^4.0.2",
